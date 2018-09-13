@@ -12,27 +12,11 @@ public class ErrorHendler {
     static final String NO_NUMBER_ERROR = "נא הזן מספר";
     static final String NO_DATE_ERROR = "תאריך לא חוקי";
 
-    public  void  setError (JTextArea textArea, String error){
+    public  void  setError (JLabel textArea, String error){
         textArea.setForeground(ERROR_COLOR);
         textArea.setText(error);
-        textArea.addFocusListener(new FocusListener() {
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if(textArea.getText().trim().length() == 0){
-                    textArea.setForeground(ERROR_COLOR);
-                    textArea.setText(error);
-                }
-            }
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                if(textArea.getText().equals(error)){
-                    textArea.setText("");
-                }
-            }
-        });
     }
+
     public static String getNoNumberError() {
         return NO_NUMBER_ERROR;
     }

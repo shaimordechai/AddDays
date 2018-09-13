@@ -9,11 +9,11 @@ import javax.swing.text.JTextComponent;
 
 public class HintTextBox {
     static final Color HINT_COLOR = Color.GRAY;
-    static  final Font HINT_FONT = new Font("Arial", Font.PLAIN, 16);
+   // static  final Font HINT_FONT = new Font("Arial", Font.PLAIN, 16);
 
     public void setHint(JTextComponent textComponent, String hint){
         textComponent.setForeground(HINT_COLOR);
-        textComponent.setFont(HINT_FONT);
+       // textComponent.setFont(HINT_FONT);
         textComponent.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         textComponent.setText(hint);
         textComponent.addFocusListener(new FocusListener() {
@@ -29,7 +29,8 @@ public class HintTextBox {
             @Override
             public void focusGained(FocusEvent e) {
                 if(textComponent.getText().equals(hint)){
-                    textComponent.setText("");
+                    textComponent.setForeground(null);
+                    textComponent.setText(null);
                 }
             }
         });
