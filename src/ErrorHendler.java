@@ -12,7 +12,7 @@ public class ErrorHendler {
     static final String NO_NUMBER_ERROR = "נא הזן מספר";
     static final String NO_DATE_ERROR = "תאריך לא חוקי";
 
-    public  void  setError (JLabel textArea, String error){
+    public  void  setError (JTextArea textArea, String error){
         textArea.setForeground(ERROR_COLOR);
         textArea.setText(error);
     }

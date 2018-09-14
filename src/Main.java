@@ -1,7 +1,5 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.swing.JTextArea;
+import javax.swing.text.JTextComponent;
 
 
 public class Main {
@@ -35,20 +34,21 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(validateInputs(frontEnd)){
-					calsculateDate();
+					calculateDate();
 				}
 			}
 		});
 
 	}
 
-	private static void calsculateDate() {
-		Date date = getDate(frontEnd.getDateField());
+	private static void calculateDate() {
+		JTextComponent dateField = frontEnd.getDateField();
+		Date date = getDate(dateField);
 		Integer daysToAdd = getDaysToAdd(frontEnd.getDaysField());
 
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTime(date);
-		frontEnd.setDate(dateFormats.get(3).format(cal.getTime()));
+		frontEnd.setTextComponent(dateField, dateFormats.get(3).format(cal.getTime()));
 		cal.add(Calendar.DATE, daysToAdd);
 		frontEnd.setResult(dateFormats.get(3).format(cal.getTime()));
 	}
@@ -63,12 +63,12 @@ public class Main {
 		return isNumber(frontEnd.getDaysField()) && isDate(frontEnd.getDateField());
 	}
 
-	private static Date getDate(JTextArea jTextArea) {
+	private static Date getDate(JTextComponent jTextComponent) {
 		Date date = null;
 		for(SimpleDateFormat format : dateFormats) {
 			//format.setLenient(false);
 			try {
-				date = format.parse(jTextArea.getText());
+				date = format.parse(jTextComponent.getText());
 				return date;
 			} catch (ParseException e) {
 				e.printStackTrace();
