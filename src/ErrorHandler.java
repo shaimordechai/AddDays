@@ -6,13 +6,13 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 
-public class ErrorHendler {
+public class ErrorHandler {
 
     static final Color ERROR_COLOR = Color.RED;
     static final String NO_NUMBER_ERROR = "נא הזן מספר";
     static final String NO_DATE_ERROR = "תאריך לא חוקי";
 
-    public  void  setError (JTextArea textArea, String error){
+    public  void  setError (JLabel textArea, String error){
         textArea.setForeground(ERROR_COLOR);
         textArea.setText(error);
     }

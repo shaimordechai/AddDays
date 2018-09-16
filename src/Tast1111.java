@@ -1,25 +1,25 @@
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 
 public class Tast1111 {
 	public static void main(String[] args) {
-		String input = "1.117";
-
-		System.out.println(isDate(input));
+		JFrame WINDOW = new JFrame();
+		ImageIcon image = new ImageIcon("D:\\Downloads\\qm.png");
+		JLabel INFO = new JLabel(image);
+		WINDOW.setLayout(new FlowLayout());
+		WINDOW.add(INFO);
+		WINDOW.pack();
+		WINDOW.setVisible(true);
 	}
 
-	static boolean isDate(String input){
-		Date date = new Date();
-		DateFormat ddMMyyyyDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		try {
-			date = ddMMyyyyDateFormat.parse(input);
-			return true;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 }

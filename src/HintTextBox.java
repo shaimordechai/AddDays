@@ -9,7 +9,7 @@ import javax.swing.text.JTextComponent;
 
 public class HintTextBox {
     static final Color HINT_COLOR = Color.GRAY;
-    static  final Font HINT_FONT = new Font("Arial", Font.PLAIN, 14);
+    static  final Font HINT_FONT = new Font("Arial", Font.PLAIN, 25);
 
     public void setHint(JTextComponent textComponent, String hint){
         textComponent.setForeground(HINT_COLOR);
