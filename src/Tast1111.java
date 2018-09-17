@@ -67,7 +67,7 @@ public class Tast1111 {
 
 		nearDatePanel.add(nearDate);
 
-		dateLine.setLayout(new FlowLayout(2, 25, 25));
+		dateLine.setLayout(new FlowLayout(2, 19, 25));
 		dateLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		dateLine.add(nearDatePanel);
 		dateLine.add(dateAndInfo);
