@@ -25,7 +25,7 @@ public class FrontEnd {
     private static final String DAYS_FIELD_HINT = "מספר";
     private static final String DATE_FIELD_HINT = "dd/mm/yyyy";
     private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =5>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
-    private static final String TIP_TEXT_RESULT_FIELD = "לחץ להעתיק";
+    private static final String TIP_TEXT_RESULT_FIELD = "<html><font size =5>לחץ<br/>להעתיק</html>";
     private static final String TIP_TEXT_COPY_RESULT_FIELD = "הועתק";
     private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 25);
     private static final Font RESULT_FONT = new Font("Arial", Font.PLAIN, 25);
@@ -34,14 +34,16 @@ public class FrontEnd {
     private static final ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
     private static final int defaultDelay = toolTipManager.getInitialDelay();
 
+    private static String prevText = new String();
+
     private static final JFrame window = new JFrame("Calc");
     private static final JPanel panel = new JPanel();
-    private static final JLabel nearDaysField = new JLabel("היום ה...");
+    private static final JLabel nearDaysField = new JLabel("היום ה-");
     private static final JLabel nearDateField = new JLabel("מתאריך");
     private static final JLabel result = new JLabel();
 
     private static final JTextArea daysField = new JTextArea();
-    private static final JTextArea dateField = new JTextArea(1,8);
+    private static final JTextArea dateField = new JTextArea(1,7);
 
     private static final JButton calculate = new JButton("חשב");
     private static ImageIcon icon = new ImageIcon("src/qm2.png");;
@@ -72,7 +74,7 @@ public class FrontEnd {
         this.result.setForeground(RESULT_COLOR);
         this.result.setFont(RESULT_FONT);
         this.result.setText(result);
-        this.result.setToolTipText(TIP_TEXT_RESULT_FIELD);
+        // this.result.setToolTipText(TIP_TEXT_RESULT_FIELD);
     }
 
     public JTextArea getDaysField() {
@@ -103,8 +105,8 @@ public class FrontEnd {
         calculate.setFocusable(false);
 
 
-        addToolTip(info, TIP_TEXT_DATE_FIELD, TIP_TEXT_DATE_FIELD);
-        addToolTip(result, TIP_TEXT_RESULT_FIELD, TIP_TEXT_COPY_RESULT_FIELD);
+        addToolTip(info, TIP_TEXT_DATE_FIELD);
+        addToolTip(result, TIP_TEXT_RESULT_FIELD);
 
         /*info.setToolTipText(TIP_TEXT_DATE_FIELD);
         info.addMouseListener(new MouseListener() {
@@ -166,6 +168,12 @@ public class FrontEnd {
 
         // My edit
         panel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+        daysField.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        dateField.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+
+        nearDaysField.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        nearDateField.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         GroupLayout layout = new GroupLayout(panel);
         panel.setLayout(layout);
 
@@ -173,6 +181,29 @@ public class FrontEnd {
         layout.setAutoCreateContainerGaps(true);
 
         // Horizontal arrangement
+        layout.setHorizontalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(nearDaysField).addComponent(daysField))
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(nearDateField).addComponent(dateField).addComponent(info))
+                        .addGroup(layout.createSequentialGroup()
+                        .addComponent(calculate))
+                        .addComponent(result))
+        );
+
+        // Vertical arrangement
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(nearDaysField).addComponent(daysField))
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(nearDateField).addComponent(dateField).addComponent(info))
+                .addGroup(layout.createParallelGroup()
+                .addComponent(calculate))
+                .addComponent(result)
+        );
+
+        /*// Horizontal arrangement
         layout.setHorizontalGroup(layout.createSequentialGroup()
                 .addGroup(
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(nearDaysField)
@@ -201,8 +232,9 @@ public class FrontEnd {
                 .addGroup(
                         layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(result))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, 40, 40)
-        );
+        );*/
 
+        layout.linkSize(SwingConstants.HORIZONTAL, nearDaysField, nearDateField);
         layout.linkSize(SwingConstants.HORIZONTAL, dateField, daysField, calculate);
 
 
@@ -216,22 +248,19 @@ public class FrontEnd {
 
     }
 
-    private void addToolTip(JLabel label, String tipTextBeforeClicked, String tipTextAfterClicked) {
-        label.setToolTipText(tipTextBeforeClicked);
+    private void addToolTip(JLabel label, String tipText) {
+        label.setToolTipText(tipText);
         label.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if(tipText.equals(TIP_TEXT_RESULT_FIELD)){
+                    label.setText(TIP_TEXT_COPY_RESULT_FIELD);
+                }
 
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                label.setToolTipText(tipTextAfterClicked);
                 Toolkit toolkit = Toolkit.getDefaultToolkit();
                 Clipboard clipboard = toolkit.getSystemClipboard();
                 StringSelection stringSelection = new StringSelection(result.getText());
@@ -239,15 +268,22 @@ public class FrontEnd {
             }
 
             @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
             public void mouseEntered(MouseEvent e) {
+                prevText = label.getText();
                 toolTipManager.setInitialDelay(0);
-                toolTipManager.mousePressed(null);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                label.setToolTipText(tipTextBeforeClicked);
                 toolTipManager.setInitialDelay(defaultDelay);
+                if(tipText.equals(TIP_TEXT_RESULT_FIELD)) {
+                    label.setText(prevText);
+                }
             }
         });
     }
