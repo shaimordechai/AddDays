@@ -173,8 +173,7 @@ public class FrontEnd {
         layout.setAutoCreateContainerGaps(true);
 
         // Horizontal arrangement
-        layout.setHorizontalGroup(layout
-                .createSequentialGroup()
+        layout.setHorizontalGroup(layout.createSequentialGroup()
                 .addGroup(
                         layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(nearDaysField)
                                 .addComponent(nearDateField))
