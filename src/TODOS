@@ -1,6 +1,5 @@
 =====TO RELEASE=====
 5. To extend the result area on the all window width.
-6. To change the Date error note.
 8. Limit the number of characters that can input to Data & Days
 
 =====DONE=====
@@ -10,3 +9,7 @@
 4. Add info button.
 7. To remove focus from the Calculate button when it is pressed.
 9. Add copy result.
+
+
+=====DELETED=====
+6. To change the Date error note.
