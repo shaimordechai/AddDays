@@ -119,12 +119,15 @@ public class CalculatorFE {
     }
 
     public void initFields() {
-        date.setFont(DEFAULT_FONT);
-        date.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        date.setHint("dd/mm/yyyy", ComponentOrientation.LEFT_TO_RIGHT);
+        days.setDocument(new JTextFieldLimit(4));
         days.setFont(DEFAULT_FONT);
         days.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         days.setHint("מספר", ComponentOrientation.RIGHT_TO_LEFT);
+
+        date.setDocument(new JTextFieldLimit(10));
+        date.setFont(DEFAULT_FONT);
+        date.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        date.setHint("dd/mm/yyyy", ComponentOrientation.LEFT_TO_RIGHT);
         result.setText("");
         panel.requestFocus();
     }
