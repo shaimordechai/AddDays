@@ -9,10 +9,18 @@ import javax.swing.JTextArea;
 
 public class ErrorHandler {
 
-    static final Color ERROR_COLOR = Color.RED;
+    private static final Color ERROR_COLOR = Color.RED;
     private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 20);
-    static final String NO_NUMBER_ERROR = "נא הזן מספר";
-    static final String NO_DATE_ERROR = "תאריך לא חוקי";
+    private static final String NO_NUMBER_ERROR = "נא הזן מספר";
+    private static final String NO_DATE_ERROR = "תאריך לא חוקי";
+
+    private static final ErrorHandler instance = new ErrorHandler();
+
+    private ErrorHandler(){}
+
+    public static ErrorHandler getInstance(){
+        return instance;
+    }
 
     public  void  setError (JLabel textArea, String error){
         textArea.setForeground(ERROR_COLOR);

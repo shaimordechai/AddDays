@@ -5,22 +5,22 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JTextArea;
-import javax.swing.text.JTextComponent;
+
+
+//Allowing to add Hint to textArea component
 
 public class MyTextComponent extends JTextArea {
-    static final Color HINT_COLOR = Color.GRAY;
-    static final Font HINT_FONT = new Font("Arial", Font.PLAIN, 20);
+    private static final Color HINT_COLOR = Color.GRAY;
+    private static final Font HINT_FONT = new Font("Arial", Font.PLAIN, 20);
 
     public MyTextComponent(){
         super();
     }
 
-    public MyTextComponent(int rows, int columns){
+    MyTextComponent(int rows, int columns){
         super(rows, columns);
-        this.setWrapStyleWord(true);
-        this.setLineWrap(false);
     }
-    public void setHint(String hint, ComponentOrientation componentOrientation) {
+    void setHint(String hint, ComponentOrientation componentOrientation) {
         {
             Color prevForeground = this.getForeground();
             Font prevFont = this.getFont();
