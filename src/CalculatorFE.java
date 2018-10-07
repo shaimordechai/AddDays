@@ -8,35 +8,66 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.text.JTextComponent;
 
 public class CalculatorFE {
 
     // Constants
-    private static final String TIP_TEXT_RESULT_FIELD = "<html><font size =5>לחץ להעתיק</html>";
-    private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =5>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
+    private static final String TIP_TEXT_RESULT_FIELD = "<html><p><font size =4>לחץ<br/>להעתיק</html>";
+    private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =3>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
     private static final String TIP_TEXT_COPY_RESULT_FIELD = "הועתק";
+    private static final String NEAR_DAYS_TEXT = "היום ה-";
+    private static final String NEAR_DATE_TEXT = "מתאריך";
+    private static final String DAYS_HINT = "מספר";
+    private static final String DATE_HINT = "dd/mm/yyyy";
     private static final Font DEFAULT_FONT = new Font("Arial", Font.ITALIC, 20);
-    private static final Color RESULT_COLOR = Color.GREEN;
+    private static final Color RESULT_COLOR = new Color(86, 189, 96);
+    private static  final int LIMIT_DAYS_INPUT = 4;
+    private static  final int LIMIT_DATE_INPUT = 10;
+
+    private static final int DEFAULT_ROWS = 1;
+    private static final int DEFAULT_COLUMNS = 7;
+    private static final int WINDOW_GAP = 20;
+    private static final int DATE_AND_INFO_GAP = 10;
+    private static final int BETWEEN_LINES_V_GAP = 10;
+    private static final int DAYS_LINE_H_GAP = 18;
+    private static final int DATE_LINE_H_GAP = 10;
+    private static final int BUTTONS_LINE_H_GAP = 20;
+    private static final int NO_GAP = 0;
+
     private static final int DEFAULT_DELAY = ToolTipManager.sharedInstance().getInitialDelay(); // Delay until the ToolTip is displayed
+    private static final ImageIcon INFO_ICON = new ImageIcon("src/qm2.png");
 
     // Components
-    private final JPanel panel = new JPanel();
-    private final MyTextComponent days = new MyTextComponent(1, 7);
-    private final MyTextComponent date = new MyTextComponent(1, 7);
+    private final  JFrame window = new JFrame("Date Calculator");
+    private final JLabel nearDays = new JLabel(NEAR_DAYS_TEXT);
+    private final JLabel nearDate = new JLabel(NEAR_DATE_TEXT);
+    private final MyTextComponent days = new MyTextComponent(DEFAULT_ROWS, DEFAULT_COLUMNS);
+    private final MyTextComponent date = new MyTextComponent(DEFAULT_ROWS, DEFAULT_COLUMNS);
     private final JButton calculate = new JButton("חשב");
     private final JButton clean = new JButton("נקה");
     private final JLabel result = new JLabel();
+    private final JPanel daysLine = new JPanel();
+    private final JPanel dateAndInfo = new JPanel();
+    private final JPanel nearDatePanel = new JPanel();
+    private final JPanel dateLine = new JPanel();
+    private final JPanel buttonsLine = new JPanel();
+    private final JPanel resultLine = new JPanel();
+    private final JPanel emptyLine = new JPanel();
+    private final JLabel info = new JLabel(INFO_ICON);
+    private final JLabel empty = new JLabel();
+    private final JLabel empty1 = new JLabel();
 
     // =================================================
     // ===========Constructor:=========================
@@ -44,92 +75,121 @@ public class CalculatorFE {
 
     public CalculatorFE(){
 
-        JFrame window = new JFrame("Date Calculator");
-
-        JPanel daysLine = new JPanel();
-        JPanel dateAndInfo = new JPanel();
-        JPanel nearDatePanel = new JPanel();
-        JPanel dateLine = new JPanel();
-        JPanel calculateLine = new JPanel();
-        JPanel resultLine = new JPanel();
-        JPanel emptyLine = new JPanel();
-
-        JLabel nearDays = new JLabel("היום ה-");
-
-        ImageIcon icon = new ImageIcon("src/qm2.png");
-        JLabel info = new JLabel(icon);
-
-        JLabel nearDate = new JLabel("מתאריך");
-
-        JLabel empty = new JLabel();
-        JLabel empty1 = new JLabel();
-
-        nearDays.setFont(DEFAULT_FONT);
-        nearDate.setFont(DEFAULT_FONT);
+        SetFonts();
         initFields();
-        calculate.setFont(DEFAULT_FONT);
-        calculate.setFocusable(false);
-        clean.setFont(DEFAULT_FONT);
-        clean.setFocusable(false);
-        window.setLayout(new FlowLayout());
-        panel.setLayout(new VerticalLayout(20));
-        dateAndInfo.setLayout(new HorizontalLayout(10));
-        nearDatePanel.setLayout(new HorizontalLayout());
-
-        daysLine.setLayout(new FlowLayout(FlowLayout.LEADING, 18, 10));
-        daysLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        daysLine.add(nearDays);
-        daysLine.add(days);
-
-        dateAndInfo.add(info);
-        dateAndInfo.add(date);
-
-        nearDatePanel.add(nearDate);
-
-        dateLine.setLayout(new FlowLayout(FlowLayout.LEADING, 10, 10));
-        dateLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        dateLine.add(nearDatePanel);
-        dateLine.add(dateAndInfo);
-
-        calculateLine.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 10));
-        calculateLine.add(empty);
-        calculateLine.add(calculate);
-        calculateLine.add(clean);
-
-        resultLine.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 7));
-        resultLine.add(result);
-
-        emptyLine.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 7));
-        emptyLine.add(empty1);
-
+        InitButtons();
+        setLayouts();
+        setComponentOrientation();
+        addComponentsToLines();
+        addLinesToWindow();
         addToolTip(info, TIP_TEXT_DATE_FIELD);
+        printScreen();
+    }
 
-        panel.add(daysLine);
-        panel.add(dateLine);
-        panel.add(calculateLine);
-        panel.add(resultLine);
-        panel.add(emptyLine);
-
+    private void printScreen() {
         window.setLocationRelativeTo(null);
-        window.add(panel);
         window.pack();
         window.setResizable(false);
         window.setVisible(true);
-        panel.requestFocus();
+        window.requestFocus();    }
+
+    private void addLinesToWindow() {
+        window.add(daysLine);
+        window.add(dateLine);
+        window.add(buttonsLine);
+        window.add(resultLine);
+        window.add(emptyLine);
+    }
+
+    private void addComponentsToLines() {
+        daysLine.add(nearDays);
+        daysLine.add(days);
+        dateAndInfo.add(info);
+        dateAndInfo.add(date);
+        nearDatePanel.add(nearDate);
+        dateLine.add(nearDatePanel);
+        dateLine.add(dateAndInfo);
+        buttonsLine.add(empty);
+        buttonsLine.add(clean);
+        buttonsLine.add(calculate);
+        resultLine.add(result);
+        emptyLine.add(empty1);
+    }
+
+    private void setComponentOrientation() {
+        daysLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        dateLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        buttonsLine.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+    }
+
+    private void setLayouts() {
+        window.setLayout(new VerticalLayout(WINDOW_GAP));
+        dateAndInfo.setLayout(new HorizontalLayout(DATE_AND_INFO_GAP));
+        nearDatePanel.setLayout(new HorizontalLayout());
+        daysLine.setLayout(new FlowLayout(FlowLayout.LEADING, DAYS_LINE_H_GAP, BETWEEN_LINES_V_GAP));
+        dateLine.setLayout(new FlowLayout(FlowLayout.LEADING, DATE_LINE_H_GAP, BETWEEN_LINES_V_GAP));
+        buttonsLine.setLayout(new FlowLayout(FlowLayout.LEADING, BUTTONS_LINE_H_GAP, BETWEEN_LINES_V_GAP));
+        resultLine.setLayout(new FlowLayout(FlowLayout.CENTER, NO_GAP, BETWEEN_LINES_V_GAP));
+        emptyLine.setLayout(new FlowLayout(FlowLayout.CENTER, NO_GAP, BETWEEN_LINES_V_GAP));
+    }
+
+    private void InitButtons() {
+        calculate.setFocusable(false);
+        clean.setFocusable(false);
+    }
+
+    private void SetFonts() {
+        nearDays.setFont(DEFAULT_FONT);
+        nearDate.setFont(DEFAULT_FONT);
+        days.setFont(DEFAULT_FONT);
+        date.setFont(DEFAULT_FONT);
+        calculate.setFont(DEFAULT_FONT);
+        clean.setFont(DEFAULT_FONT);
     }
 
     public void initFields() {
-        days.setDocument(new JTextFieldLimit(4));
-        days.setFont(DEFAULT_FONT);
-        days.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        days.setHint("מספר", ComponentOrientation.RIGHT_TO_LEFT);
-
-        date.setDocument(new JTextFieldLimit(10));
-        date.setFont(DEFAULT_FONT);
-        date.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        date.setHint("dd/mm/yyyy", ComponentOrientation.LEFT_TO_RIGHT);
+        setDocumentToTextArea();
+        setHints();
+        jumpTab(days, date);
+        jumpTab(date, days);
         result.setText("");
-        panel.requestFocus();
+        window.requestFocus();
+    }
+
+    private void setDocumentToTextArea(){
+        days.setDocument(new JTextFieldLimit(LIMIT_DAYS_INPUT));
+        date.setDocument(new JTextFieldLimit(LIMIT_DATE_INPUT));
+    }
+
+    private void setHints(){
+        days.setHint(DAYS_HINT, ComponentOrientation.RIGHT_TO_LEFT);
+        date.setHint(DATE_HINT,ComponentOrientation.LEFT_TO_RIGHT);
+    }
+
+    private void jumpTab(JComponent from, JComponent to){
+        from.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_TAB:
+                        to.requestFocus();
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
     }
 
     /**
@@ -143,26 +203,27 @@ public class CalculatorFE {
             String prevText = null;
 
             @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
+            public void mouseClicked(MouseEvent e) {}
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if(tipText.equals(TIP_TEXT_RESULT_FIELD)){
-                    label.setText(TIP_TEXT_COPY_RESULT_FIELD);
+                copyResult();
+            }
+
+            // Copies the current text and prints a message
+            private void copyResult() {
+                if (tipText.equals(TIP_TEXT_RESULT_FIELD)) {
                     label.setToolTipText(null);
+                    Toolkit toolkit = Toolkit.getDefaultToolkit();
+                    Clipboard clipboard = toolkit.getSystemClipboard();
+                    StringSelection stringSelection = new StringSelection(result.getText());
+                    clipboard.setContents(stringSelection, null);
+                    label.setText(TIP_TEXT_COPY_RESULT_FIELD);
                 }
-                Toolkit toolkit = Toolkit.getDefaultToolkit();
-                Clipboard clipboard = toolkit.getSystemClipboard();
-                StringSelection stringSelection = new StringSelection(result.getText());
-                clipboard.setContents(stringSelection, null);
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
+            public void mouseReleased(MouseEvent e) {}
 
             @Override
             public void mouseEntered(MouseEvent e) {

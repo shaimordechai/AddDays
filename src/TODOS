@@ -1,4 +1,5 @@
 =====TO RELEASE=====
+11. Add check input online.
 
 =====DONE=====
 1. To extend the main window.
@@ -8,6 +9,7 @@
 7. To remove focus from the Calculate button when it is pressed.
 8. Limit the number of characters that can input to Data & Days
 9. Add copy result.
+10. Add a transition to the next element when clicked a tab
 
 
 =====DELETED=====
