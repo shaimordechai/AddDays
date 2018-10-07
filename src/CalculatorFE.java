@@ -19,12 +19,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 
 public class CalculatorFE {
 
     // Constants
-    private static final String TIP_TEXT_RESULT_FIELD = "<html><p><font size =4>לחץ<br/>להעתיק</html>";
+    //private static final String TIP_TEXT_RESULT_FIELD = "<html><p><font size =4>לחץ<br>להעתיק</html>";
+    private static final String TIP_TEXT_RESULT_FIELD = "לחץ להעתיק";
     private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =3>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
     private static final String TIP_TEXT_COPY_RESULT_FIELD = "הועתק";
     private static final String NEAR_DAYS_TEXT = "היום ה-";
@@ -57,7 +59,6 @@ public class CalculatorFE {
     private final MyTextComponent date = new MyTextComponent(DEFAULT_ROWS, DEFAULT_COLUMNS);
     private final JButton calculate = new JButton("חשב");
     private final JButton clean = new JButton("נקה");
-    private final JLabel result = new JLabel();
     private final JPanel daysLine = new JPanel();
     private final JPanel dateAndInfo = new JPanel();
     private final JPanel nearDatePanel = new JPanel();
@@ -65,7 +66,18 @@ public class CalculatorFE {
     private final JPanel buttonsLine = new JPanel();
     private final JPanel resultLine = new JPanel();
     private final JPanel emptyLine = new JPanel();
-    private final JLabel info = new JLabel(INFO_ICON);
+    private final JLabel result = new JLabel(){
+        @Override
+        public JToolTip createToolTip(){
+            return (new MyJToolTip(this));
+        }
+    };
+    private final JLabel info = new JLabel(INFO_ICON){
+        @Override
+                public JToolTip createToolTip(){
+            return (new MyJToolTip(this));
+        }
+    };
     private final JLabel empty = new JLabel();
     private final JLabel empty1 = new JLabel();
 
