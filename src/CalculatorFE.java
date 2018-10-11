@@ -19,12 +19,18 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 
 public class CalculatorFE {
 
     // Constants
+    private static final String REGEX_NUMBER = "[0-9]+";
+    private static final String REGEX_DATE = "^(?:(?:31(\\/|-|\\.||)(?:0?[13578]|1[02]))\\1|" +
+            "(?:(?:29|30)(\\/|-|\\.||)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|" +
+            "^(?:29(\\/|-|\\.||)0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|" +
+            "(?:(?:16|[2468][048]|[3579][26])00))))$|" +
+            "^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.||)(?:(?:0?[1-9])|" +
+            "(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
     //private static final String TIP_TEXT_RESULT_FIELD = "<html><p><font size =4>לחץ<br>להעתיק</html>";
     private static final String TIP_TEXT_RESULT_FIELD = "לחץ להעתיק";
     private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =3>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
@@ -66,20 +72,11 @@ public class CalculatorFE {
     private final JPanel buttonsLine = new JPanel();
     private final JPanel resultLine = new JPanel();
     private final JPanel emptyLine = new JPanel();
-    private final JLabel result = new JLabel(){
-        @Override
-        public JToolTip createToolTip(){
-            return (new MyJToolTip(this));
-        }
-    };
-    private final JLabel info = new JLabel(INFO_ICON){
-        @Override
-                public JToolTip createToolTip(){
-            return (new MyJToolTip(this));
-        }
-    };
+    private final MyLabelComponent result = new MyLabelComponent();
+    private final MyLabelComponent info = new MyLabelComponent(INFO_ICON);
     private final JLabel empty = new JLabel();
     private final JLabel empty1 = new JLabel();
+    private boolean copyEnableFlag = true;
 
     // =================================================
     // ===========Constructor:=========================
@@ -169,8 +166,8 @@ public class CalculatorFE {
     }
 
     private void setDocumentToTextArea(){
-        days.setDocument(new JTextFieldLimit(LIMIT_DAYS_INPUT));
-        date.setDocument(new JTextFieldLimit(LIMIT_DATE_INPUT));
+        days.setDocument(new JTextFieldLimit(LIMIT_DAYS_INPUT, REGEX_NUMBER, DAYS_HINT, result ));
+        date.setDocument(new JTextFieldLimit(LIMIT_DATE_INPUT, REGEX_DATE, DATE_HINT, result));
     }
 
     private void setHints(){
@@ -224,13 +221,14 @@ public class CalculatorFE {
 
             // Copies the current text and prints a message
             private void copyResult() {
-                if (tipText.equals(TIP_TEXT_RESULT_FIELD)) {
+                if (tipText.equals(TIP_TEXT_RESULT_FIELD) && copyEnableFlag) {
                     label.setToolTipText(null);
                     Toolkit toolkit = Toolkit.getDefaultToolkit();
                     Clipboard clipboard = toolkit.getSystemClipboard();
                     StringSelection stringSelection = new StringSelection(result.getText());
                     clipboard.setContents(stringSelection, null);
                     label.setText(TIP_TEXT_COPY_RESULT_FIELD);
+                    copyEnableFlag = false;
                 }
             }
 
@@ -245,9 +243,11 @@ public class CalculatorFE {
 
             @Override
             public void mouseExited(MouseEvent e) {
+                copyEnableFlag = true;
                 ToolTipManager.sharedInstance().setInitialDelay(DEFAULT_DELAY);
                 if(tipText.equals(TIP_TEXT_RESULT_FIELD)) {
                     label.setText(prevText);
+                    label.setToolTipText(tipText);
                 }
             }
         });

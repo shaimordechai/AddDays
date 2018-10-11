@@ -25,7 +25,7 @@ public class MyTextComponent extends JTextArea {
             this.setForeground(HINT_COLOR);
             this.setFont(HINT_FONT);
             this.setComponentOrientation(componentOrientation);
-            this.setText(hint);
+           this.setText(hint);
             this.addFocusListener(new FocusListener() {
 
                 @Override
