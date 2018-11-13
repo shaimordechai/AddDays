@@ -2,7 +2,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
 
-// Make jLabel with costom ToolTip
+// Allowing to add custom Tool Tip
+
 public class MyLabelComponent extends JLabel {
 
     MyLabelComponent(){
@@ -10,6 +11,9 @@ public class MyLabelComponent extends JLabel {
     }
     MyLabelComponent(ImageIcon icon){
         super(icon);
+    }
+    MyLabelComponent(String text, int horizontalAlignment){
+    	super(text, horizontalAlignment);
     }
     @Override
     public JToolTip createToolTip(){

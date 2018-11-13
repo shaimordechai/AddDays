@@ -8,7 +8,7 @@ public class MyJToolTip extends JToolTip {
     public MyJToolTip(JComponent component) {
         super();
         setComponent(component);
-        setBackground(Color.white);
-        setForeground(Color.gray);
+        setBackground(Color.WHITE);
+        setForeground(Color.GRAY);
     }
 }
