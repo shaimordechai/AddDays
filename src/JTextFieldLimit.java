@@ -5,9 +5,10 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+// Allowing to limit and chack online the textArea component.
 public class JTextFieldLimit extends PlainDocument {
 
-    private static final String TAB = "[\t]";
+    private static final String REGEX_TAB = "[\t]";
     private static final String REGEX_NUMBER = "[0-9]+";
     private static final String REGEX_DATE = "^(?:(?:31(\\/|-|\\.||)(?:0?[13578]|1[02]))\\1|" +
             "(?:(?:29|30)(\\/|-|\\.||)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|" +
@@ -15,12 +16,16 @@ public class JTextFieldLimit extends PlainDocument {
             "(?:(?:16|[2468][048]|[3579][26])00))))$|" +
             "^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.||)(?:(?:0?[1-9])|" +
             "(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
-    private final ErrorHandler errorHandler = ErrorHandler.getInstance();
+    private static final ErrorHandler errorHandler = ErrorHandler.getInstance();
 
     private int limit;
     private String type;
     private String hint;
     private JLabel label;
+
+    // =================================================
+    // ===========Constructor:=========================
+    // =================================================
 
     JTextFieldLimit(int limit, String type, String hint, JLabel label) {
         super();
@@ -33,8 +38,7 @@ public class JTextFieldLimit extends PlainDocument {
 
     @Override
     public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-        if (str == null || str.matches(TAB) || (getLength() + str.length()) > limit) {
-            System.out.println("shai");
+        if (str == null || str.matches(REGEX_TAB) || (getLength() + str.length()) > limit) {
             return;
         }
         super.insertString(offset, str, attr);
@@ -60,9 +64,7 @@ public class JTextFieldLimit extends PlainDocument {
             public void removeUpdate(DocumentEvent e) {
                 try {
                     String Text = getText(0, getLength());
-                    if(Text.matches(type)
-                            || Text.equals(hint)
-                            || Text.equals("")) {
+                    if(Text.matches(type) || Text.equals(hint) || Text.equals("")) {
                         errorHandler.cleanError(label);
                     } else{
                         setError();

@@ -2,6 +2,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
 
+// Make jLabel with costom ToolTip
 public class MyLabelComponent extends JLabel {
 
     MyLabelComponent(){

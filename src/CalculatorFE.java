@@ -31,12 +31,13 @@ public class CalculatorFE {
             "(?:(?:16|[2468][048]|[3579][26])00))))$|" +
             "^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.||)(?:(?:0?[1-9])|" +
             "(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
-    //private static final String TIP_TEXT_RESULT_FIELD = "<html><p><font size =4>לחץ<br>להעתיק</html>";
     private static final String TIP_TEXT_RESULT_FIELD = "לחץ להעתיק";
     private static final String TIP_TEXT_DATE_FIELD = "<html><p><font size =3>dd/mm/yyyy<br/>dd/mm/yy<br/>dd.mm.yyyy<br/>dd.mm.yy<br/>ddmmyyyyy<br/>ddmmyy</html>";
     private static final String TIP_TEXT_COPY_RESULT_FIELD = "הועתק";
     private static final String NEAR_DAYS_TEXT = "היום ה-";
     private static final String NEAR_DATE_TEXT = "מתאריך";
+    private static final String CALCULATE = "חשב";
+    private static final String CLEAN = "נקה";
     private static final String DAYS_HINT = "מספר";
     private static final String DATE_HINT = "dd/mm/yyyy";
     private static final Font DEFAULT_FONT = new Font("Arial", Font.ITALIC, 20);
@@ -63,8 +64,8 @@ public class CalculatorFE {
     private final JLabel nearDate = new JLabel(NEAR_DATE_TEXT);
     private final MyTextComponent days = new MyTextComponent(DEFAULT_ROWS, DEFAULT_COLUMNS);
     private final MyTextComponent date = new MyTextComponent(DEFAULT_ROWS, DEFAULT_COLUMNS);
-    private final JButton calculate = new JButton("חשב");
-    private final JButton clean = new JButton("נקה");
+    private final JButton calculate = new JButton(CALCULATE);
+    private final JButton clean = new JButton(CLEAN);
     private final JPanel daysLine = new JPanel();
     private final JPanel dateAndInfo = new JPanel();
     private final JPanel nearDatePanel = new JPanel();
@@ -76,6 +77,8 @@ public class CalculatorFE {
     private final MyLabelComponent info = new MyLabelComponent(INFO_ICON);
     private final JLabel empty = new JLabel();
     private final JLabel empty1 = new JLabel();
+
+    // Fields
     private boolean copyEnableFlag = true;
 
     // =================================================
@@ -161,8 +164,8 @@ public class CalculatorFE {
         setHints();
         jumpTab(days, date);
         jumpTab(date, days);
-        result.setText("");
-        window.requestFocus();
+        // result.setText("");
+        window.requestFocus();  // Set focus out of the JLabels
     }
 
     private void setDocumentToTextArea(){
@@ -216,20 +219,20 @@ public class CalculatorFE {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                copyResult();
+                if (tipText.equals(TIP_TEXT_RESULT_FIELD) && copyEnableFlag){
+                    copyResult();
+                }
             }
 
             // Copies the current text and prints a message
             private void copyResult() {
-                if (tipText.equals(TIP_TEXT_RESULT_FIELD) && copyEnableFlag) {
-                    label.setToolTipText(null);
-                    Toolkit toolkit = Toolkit.getDefaultToolkit();
-                    Clipboard clipboard = toolkit.getSystemClipboard();
-                    StringSelection stringSelection = new StringSelection(result.getText());
-                    clipboard.setContents(stringSelection, null);
-                    label.setText(TIP_TEXT_COPY_RESULT_FIELD);
-                    copyEnableFlag = false;
-                }
+                label.setToolTipText(null);
+                Toolkit toolkit = Toolkit.getDefaultToolkit();
+                Clipboard clipboard = toolkit.getSystemClipboard();
+                StringSelection stringSelection = new StringSelection(result.getText());
+                clipboard.setContents(stringSelection, null);
+                label.setText(TIP_TEXT_COPY_RESULT_FIELD);
+                copyEnableFlag = false;
             }
 
             @Override
