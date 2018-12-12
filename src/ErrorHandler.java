@@ -23,8 +23,8 @@ public class ErrorHandler {
     }
 
     public void setError(JLabel textArea, String error) {
-        prevForeground = textArea.getForeground();
-        prevFont = textArea.getFont();
+        this.prevForeground = textArea.getForeground();
+        this.prevFont = textArea.getFont();
         textArea.setForeground(ERROR_COLOR);
         textArea.setFont(DEFAULT_FONT);
         textArea.setToolTipText(null);

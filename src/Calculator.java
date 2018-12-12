@@ -9,15 +9,14 @@ import java.util.List;
 public class Calculator {
 
 	// Constants
-	private static final List<SimpleDateFormat> DATE_FORMATS = new ArrayList<SimpleDateFormat>() {{
-		add(new SimpleDateFormat("ddMMyy"));
-		add(new SimpleDateFormat("ddMMyyyy"));
-		add(new SimpleDateFormat("dd/MM/yy"));
-		add(new SimpleDateFormat("dd/MM/yyyy"));
-		add(new SimpleDateFormat("dd.MM.yy"));
-		add(new SimpleDateFormat("dd.MM.yyyy"));
+	private static final List<SimpleDateFormat> DATE_FORMATS = new ArrayList<>() {{
+		add(DateUtilities.getDdMMyyFormat());
+		add(DateUtilities.getDdMMyyyyFormat());
+		add(DateUtilities.getDdMMyySlashFormat());
+		add(DateUtilities.getDdMMyyyySlashFormat());
+		add(DateUtilities.getDdMMyyPointFormat());
+		add(DateUtilities.getDdMMyyyyPointFormat());
 	}};
-	private static final SimpleDateFormat SLASH_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
 	/**
 	 *  Convert text input to a Date
@@ -52,7 +51,7 @@ public class Calculator {
 	 * @return String of date with SLASH_FORMAT
 	 */
 	private static String formatDate(Calendar cal) {
-		return SLASH_FORMAT.format(cal.getTime());
+		return DateUtilities.getDdMMyySlashFormat().format(cal.getTime());
 	}
 
 	/**
@@ -64,9 +63,12 @@ public class Calculator {
 		Integer daysToAdd = getDaysToAdd(daysInString);
 		Date date = getDate(dateInString);
 		Calendar cal = GregorianCalendar.getInstance();
-		cal.setTime(date);
-		cal.add(Calendar.DATE, daysToAdd);
-		return formatDate(cal);
-	}
+        if ((date == null) || (daysToAdd == null)) {
+            return null;
+        }
+        cal.setTime(date);
+        cal.add(Calendar.DATE, daysToAdd);
+        return formatDate(cal);
+    }
 }
 

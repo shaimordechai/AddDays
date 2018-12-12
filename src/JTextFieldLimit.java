@@ -20,38 +20,39 @@ public class JTextFieldLimit extends PlainDocument {
 			"(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";
 	private final ErrorHandler errorHandler = ErrorHandler.getInstance();
 
-	private int limit;
-	private int min;
-	private String type;
-	private String hint;
+	private int maximumCharacters;
+	private int minimumCharacters;
+	private String regex;
+	private String hintText;
 	private JLabel labelField;
 	private JButton calculateButton;
 
-	private static boolean validateDaysField = false;
-	private static boolean validateDateField = false;
+	private static boolean isDaysFieldValid = false; // TODO why static
+	private static boolean isDateFieldValid = false;
 
-	JTextFieldLimit(int limit, int min, String type, String hint, JLabel label, JButton button) {
+	public JTextFieldLimit(int maximumCharacters, int minimumCharacters, String regex, String hintText,
+						   JLabel label, JButton button) {
 		super();
-		this.limit = limit;
-		this.min = min;
-		this.type = type;
-		this.hint = hint;
+		this.maximumCharacters = maximumCharacters;
+		this.minimumCharacters = minimumCharacters;
+		this.regex = regex;
+		this.hintText = hintText;
 		this.labelField = label;
 		this.calculateButton = button;
-		checkOnline();
+		initCheckOnTheFlyListener();
 	}
 
 	@Override
 	public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
 		System.out.println(this.getClass().getSimpleName() + ".insertString");
-		if (str == null || str.matches(TAB_OR_ENTER) || (getLength() + str.length()) > limit) {
+		if (str == null || str.matches(TAB_OR_ENTER) || (getLength() + str.length()) > maximumCharacters) {
 			return;
 		}
 		super.insertString(offset, str, attr);
 	}
 
-	private void checkOnline() {
-		System.out.println(this.getClass().getSimpleName() + ".checkOnline");
+	private void initCheckOnTheFlyListener() {
+		System.out.println(this.getClass().getSimpleName() + ".initCheckOnTheFlyListener");
 		addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -61,7 +62,7 @@ public class JTextFieldLimit extends PlainDocument {
 				} catch (BadLocationException e1) {
 					e1.printStackTrace();
 				} finally{
-					if(isValidate()){
+					if(isValidated()){
 						calculateButton.setEnabled(true);
 					} else{
 						calculateButton.setEnabled(false);
@@ -76,7 +77,7 @@ public class JTextFieldLimit extends PlainDocument {
 				} catch (BadLocationException e1) {
 					e1.printStackTrace();
 				} finally{
-					if(isValidate()){
+					if(isValidated()){
 						calculateButton.setEnabled(true);
 					} else{
 						calculateButton.setEnabled(false);
@@ -91,7 +92,7 @@ public class JTextFieldLimit extends PlainDocument {
 				} catch (BadLocationException e1) {
 					e1.printStackTrace();
 				} finally{
-					if(isValidate()){
+					if(isValidated()){
 						calculateButton.setEnabled(true);
 					} else{
 						calculateButton.setEnabled(false);
@@ -103,10 +104,10 @@ public class JTextFieldLimit extends PlainDocument {
 
 	private void checkInput(String text) {
 		System.out.println(this.getClass().getSimpleName() + ".checkInput");
-		if(text.matches(type) && getLength() >= min){
+		if(text.matches(regex) && getLength() >= minimumCharacters){
 			errorHandler.cleanError(labelField);
 			setValidate(true);
-		} else if (text.equals(hint) || text.trim().equals("")) {
+		} else if (text.equals(hintText) || text.trim().equals("")) {
 			errorHandler.cleanError(labelField);
 			setValidate(false);
 		} else{
@@ -117,25 +118,25 @@ public class JTextFieldLimit extends PlainDocument {
 
 	private void setValidate(boolean status) {
 		System.out.println(this.getClass().getSimpleName() + ".setValidate");
-		switch (type) {
+		switch (regex) {
 		case REGEX_NUMBER:
-			validateDaysField = status;
+			isDaysFieldValid = status;
 			break;
 		case REGEX_DATE:
-			validateDateField = status;
+			isDateFieldValid = status;
 			break;
 		default:
 			break;
 		}
 	}
 
-	private boolean isValidate() {
-		System.out.println(this.getClass().getSimpleName() + ".isValidate");
-		return validateDateField && validateDaysField;
+	private boolean isValidated() {
+		System.out.println(this.getClass().getSimpleName() + ".isValidated");
+		return isDateFieldValid && isDaysFieldValid;
 	}
 
 	private void setError() {
-		switch (type) {
+		switch (regex) {
 		case REGEX_NUMBER:
 			errorHandler.setError(labelField, ErrorHandler.NO_NUMBER_ERROR);
 			break;

@@ -1,16 +1,19 @@
 =====TO RELEASE=====
+15. Yahas numbers to constants
 
 =====DONE=====
-11. Add check input online.
 1. To extend the main window.
-2. To extend the calculate butonn.
+2. To extend the calculate button.
 3. Result - coloring in green color.
 4. Add info button.
 7. To remove focus from the Calculate button when it is pressed.
 8. Limit the number of characters that can input to Data & Days
 9. Add copy result.
 10. Add a transition to the next element when clicked a tab
+11. Add check input online.
 12. Add custom Tool Tip
+13. Move Date format to Utilities class.
+14. Spelling!!!!
 
 
 =====DELETED=====
